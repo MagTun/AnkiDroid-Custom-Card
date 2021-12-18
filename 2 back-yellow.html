@@ -1,0 +1,116 @@
+<!-- yellow-->
+
+<script>
+    sessionStorage.setItem('lastAnswerColor', '')
+    document.body.style.backgroundColor = "#363636"
+</script>
+
+
+<button class="buttonInteract" id="buttoncardBrowserY">Card browser</button>
+<button class="buttonInteract" id="buttoncardBrowserControlY"
+    style="display: none; position: absolute; top: 0; left: 0;">Confirm open
+    browser BACK</button>
+<button class="buttonInteract" onclick="selecttextalldiv('yellow')">Select all</button>
+
+
+
+<div id="mainy" style="overflow-y: scroll;clear: both;">
+
+    <div class="containerQA">
+        <p id="yellow"></p>
+    </div>
+
+    <!-- <div id="testy"></div> -->
+    <br>
+    <hr style="clear:both; margin:0px;">
+    {{FrontSide}}
+</div>
+
+
+<script src="0000_00_js_addon_button_back.js"></script>
+
+
+
+
+
+<script>
+    // back template can modify the html in front 
+    // back script is loaded after the front script  so templateBack= 1 on back 
+    // document.getElementById("testg").innerText="front modif by back"
+
+    // # .... *function in green but used by yellow: 
+    //  AnkiDroidJS api creation 
+    // ftextParenthesisSmall
+    // fTTSBody_handleTextSelection event on body calling   
+    // fselectWordClicked 
+    // selecttextalldiv  
+
+    var templateBack = 1 //0 = front, back =1  : needed to get function in front work on back  when back is activated 
+
+    // # .... * show buttonTTSgreen 
+    document.getElementById("buttonTTSgreen").style.display = "inline";
+
+    //  # .... *
+    var fullDivselected_wordselectionDisabledY = false;
+    var countClick_toReenableWordSelectionY = 0;
+
+
+
+    var yellowDiv = document.getElementById("yellow")
+    var languageG = 'en-US'
+    var languageY = 'nl'
+
+    // if a card is mature (interval >30) : every other review show the front or the back 
+    if (AnkiDroidJS.ankiGetCardInterval() > 30) {
+        if (AnkiDroidJS.ankiGetCardReps() % 2 == 0) {
+            yellowDiv.innerHTML = `{{to_learn}}`;
+            languageY = 'nl'
+        } else {
+            yellowDiv.innerHTML = `{{known}}`;
+            languageY = 'en-US'
+        }
+    } else {
+        yellowDiv.innerHTML = `{{to_learn}}`;
+        languageY = 'nl'
+    }
+
+
+
+    // # .... * Set the font size of all the text between parenthesis to 35 pixel
+    ftextParenthesisSmall("yellow")
+
+
+    // tts  https://github.com/ankidroid/Anki-Android/pull/8812
+    var textforTTS = document.getElementById("yellow").textContent;
+    AnkiDroidJS.ankiTtsSetLanguage(languageY);
+    AnkiDroidJS.ankiTtsSpeak(textforTTS);
+
+
+    document.getElementById("yellow").addEventListener('click',
+        fselectWordClicked, false);
+
+
+    var buttoncardBrowserY = document.getElementById("buttoncardBrowserY");
+    var buttoncardBrowserControlY = document.getElementById("buttoncardBrowserControlY");
+
+    buttoncardBrowserY.addEventListener(
+        "click",
+        function () {
+            buttoncardBrowserY.style.visibility = "hidden";
+            buttoncardBrowserControlY.style.display = "block";
+            setTimeout(function () {
+                buttoncardBrowserY.style.visibility = "visible";
+                buttoncardBrowserControlY.style.display = "none";
+            }, 4000);
+        },
+        false
+    );
+
+    buttoncardBrowserControlY.addEventListener(
+        "click",
+        function () {
+            AnkiDroidJS.ankiSearchCard(`{{to_learn}}`);
+        },
+        false
+    );
+</script>

@@ -1,0 +1,99 @@
+/*  css  */
+
+
+
+@import url("0000_00_js_addon_buttons_style.css");
+
+.night_mode {}
+
+
+#content {
+    margin: 0px 20px 0px 20px;
+    height: 95%;
+}
+
+.card {
+    font-family: arial;
+    font-size: 60px;
+    text-align: center;
+    color: rgb(255, 255, 0);
+    background-color: #363636;
+    padding: 0px;
+    margin: 0px;
+}
+
+.containerQA {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+    vertical-align: middle;
+    text-align: center;
+    clear: both;
+}
+
+p {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    padding: 0px;
+    display: inline;
+    line-height: 65px;
+    /*wrap long word :hyphen (addding -) only work for known long word and not on chromium browser, by at leas the wrap works*/
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    -webkit-hyphens: auto;
+    -ms-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+
+}
+
+.parenthesis {
+    font-size: 35px;
+    line-height: 30px;
+}
+
+div {
+    padding: 0px;
+    margin: 0px;
+    line-height: 10px;
+}
+
+.buttonInteract {
+    padding: 3px;
+    margin-top: 10px;
+    margin-right: 10px;
+    line-height: 10px;
+    font-size: 15px;
+    float: right;
+}
+
+
+
+#green {
+    color: #62ff00;
+
+}
+
+#yellow {
+    color: rgb(255, 255, 0);
+
+}
+
+
+.replay-button svg {
+    width: 20px;
+    height: 20px;
+}
+
+.replay-button svg circle {
+    fill: blue;
+}
+
+.replay-button svg path {
+    stroke: white;
+    fill: green;
+}

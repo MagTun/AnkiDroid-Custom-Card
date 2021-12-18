@@ -1,0 +1,271 @@
+<!-- green
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script> 
+
+<script>eruda.init();</script>
+
+-->
+
+
+<script>
+
+    var ttsAnswerVar = "true";
+   // var ttsAnswerVar = "";
+
+    var colorBcksAnswerVar = "true";
+    var colorBcksAnswerVar = "";
+
+
+     var posAnswerButtonsCentralVar = "true";
+   //  var posAnswerButtonsCentralVar = "";
+
+</script>
+
+
+<!--  use the 00_0js_addon_button for : card count + inter /review+ show answer /answer button + resize maing and mainy when screen orientation change
+- the addon needs div id maing and mainy (which should contains the field text) and a var templateBack true/false
+-->
+
+
+<!-- <div id="data"></div>  added via script in media -->
+
+<button class="buttonInteract" onclick="ankiShowNavDrawer()">NavDrawer</button>
+
+<button class="buttonInteract" id="buttoncardBrowser">Card browser</button>
+<button class="buttonInteract" id="buttoncardBrowserControl" style="display: none; position: absolute; top: 0; left: 0;">Confirm open
+ browser FRONT</button>
+<p style="width:20px; float: right;line-height:3px;">
+ &nbsp;
+</p>
+
+
+<button class="buttonInteract" onclick="AnkiDroidJS.ankiAddTagToCard();">Tag</button>
+<button class="buttonInteract" onclick="selecttextalldiv('green')">Select all</button>
+<button class="buttonInteract" id="buttonTTSgreen" style="display: none;">&nbsp;&nbsp;TTS&nbsp;&nbsp;&nbsp;</button>
+
+
+<div id="maing" style="overflow-y: scroll; clear: both;">
+ <!-- <p id="testg"></p> -->
+ <div class="containerQA">
+  <p id="green"></p>
+ </div>
+<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;<br>&nbsp;
+</div>
+
+
+
+
+
+
+
+<script>
+ var templateBack = 0 //0 = front, back =1
+ languageG = 'en-US'
+ languageY = 'nl'
+ console.log(templateBack)
+ // # .... * start the api
+ var jsApi = {
+  version: "0.0.1",
+  developer: "dev@mail.com",
+ };
+ var apiStatus = AnkiDroidJS.init(JSON.stringify(jsApi));
+
+ // variable to handle the text selection
+ //   they are 2 function that select the text :
+ //  - whole p green/yellow : via the  button
+ //  - each word= click on word
+ // these 2 function can interfer with each other. To prevent that, when the whole text is selected, the click on the word is not possible, until this selection is remove (when click more than 2 times on the p green/yellow)
+ var fullDivselected_wordselectionDisabled = false;
+ var countClick_toReenableWordSelection = 0;
+
+ // ADDEED VIA script in media // # .... * get the interval and number review of the card
+ // document.getElementById("data").innerHTML = "int:" + AnkiDroidJS.ankiGetCardInterval() + "; rev:" + AnkiDroidJS
+ //     .ankiGetCardReps();
+
+
+ var greenDiv = document.getElementById("green")
+
+
+ // if a card is mature (interval >30) : every other review show the front or the back
+ if (AnkiDroidJS.ankiGetCardInterval() > 30) {
+  if (AnkiDroidJS.ankiGetCardReps() % 2 == 0) {
+   // testDIV.innerHTML = '2';
+   greenDiv.innerHTML = `{{known}}`;
+   languageG = 'en-US'
+   languageY = 'nl'
+  } else {
+   // testDIV.innerHTML = '1';
+   greenDiv.innerHTML = "Dutch:<br>" +`{{to_learn}}`;
+   languageG = 'nl'
+   languageY = 'en-US'
+  }
+ } else {
+  // testDIV.innerHTML = '0';
+  greenDiv.innerHTML = `{{known}}`;
+  languageG = 'en-US'
+  languageY = 'nl'
+ }
+
+
+
+
+
+ // # .... * Set the font size of all the text between parenthesis to 35 pixel
+
+ ftextParenthesisSmall("green")
+
+ function ftextParenthesisSmall(id) {
+  var element = document.getElementById(id);
+  element.innerHTML = element.innerHTML.replaceAll("(", '<p class="parenthesis">(').replaceAll(")", ")</p>");
+ }
+ //  text.innerHTML = text.innerHTML.replaceAll("(", '<span style="font-size:35px">(').replaceAll(")", ")</span>");
+
+
+ //# .... *  tts  https://github.com/ankidroid/Anki-Android/pull/8812
+ var textforTTS = document.getElementById("green").textContent;
+ AnkiDroidJS.ankiTtsSetLanguage(languageG);
+ AnkiDroidJS.ankiTtsSpeak(textforTTS);
+
+ //  # .... * add event to TTS when click on body (except the know  to_learn)
+
+ document.getElementsByTagName("body")[0].addEventListener("click", fTTSBody_handleTextSelection, false);
+
+ function fTTSBody_handleTextSelection() {
+  var target = event.target;
+  console.log(target)
+  // document.getElementById("testg").innerText = target.id
+
+  if (target.tagName == "BODY" || target.tagName == "DIV") {
+   AnkiDroidJS.ankiTtsSpeak(textforTTS);
+   fullDivselected_wordselectionDisabled = false
+   if (templateBack) {
+    fullDivselected_wordselectionDisabledY = false
+   }
+  } else {
+   if (fullDivselected_wordselectionDisabled) {
+    // if the "wole text has been selected via the button",  2 clicks are needed  before reenabling the word selection : first click : the android selection popup menu appear, 2n click, the selection is removed
+    countClick_toReenableWordSelection += 1
+   }
+   if (countClick_toReenableWordSelection > 2) {
+    fullDivselected_wordselectionDisabled = false
+
+   }
+   // on template back we use ≠ var to not interfer between the select ?? needed ???
+   if (templateBack) {
+    if (fullDivselected_wordselectionDisabledY) {
+     // if the "wole text has been selected via the button",  2 clicks are needed  before reenabling the word selection : first click : the android selection popup menu appear, 2n click, the selection is removed
+     countClick_toReenableWordSelectionY += 1
+    }
+    if (countClick_toReenableWordSelectionY > 2) {
+     fullDivselected_wordselectionDisabledY = false
+
+    }
+   }
+
+  }
+ }
+
+ //# .... * button TTS the question/know when the answer/to_learn is dispplayed
+ document.getElementById("buttonTTSgreen").addEventListener("click", fTTSgreen, false);
+
+ function fTTSgreen() {
+  var textforTTSgreen = document.getElementById("green").textContent;
+  AnkiDroidJS.ankiTtsSetLanguage(languageG);
+  AnkiDroidJS.ankiTtsSpeak(textforTTSgreen);
+  // needed to set the languages back to nl otherwise the click on body for answer will use us
+  AnkiDroidJS.ankiTtsSetLanguage(languageY);
+ }
+
+
+ // # .... * select word of question/answer that are clicked
+ document.getElementById("green").addEventListener("click", fselectWordClicked, false);
+
+ function fselectWordClicked() {
+  var wordSelectionallowed = false
+  if (templateBack) {
+   if (!fullDivselected_wordselectionDisabledY) {
+    wordSelectionallowed = true
+   }
+  } else {
+   if (!fullDivselected_wordselectionDisabled) {
+    wordSelectionallowed = true
+   }
+  }
+  if (wordSelectionallowed) {
+   // https://stackoverflow.com/a/41345185  better then the most upvoted- no need for jquery, used only for selection
+   var selection = window.getSelection();
+   //    if (!selection || selection.rangeCount < 1) return true;// doesn't change anything when commented
+   var range = selection.getRangeAt(0);
+   var node = selection.anchorNode;
+   var word_regexp = /^\w*$/;
+
+   // Extend the range backward until it matches word beginning
+   while ((range.startOffset > 0) && range.toString().match(word_regexp)) {
+    range.setStart(node, (range.startOffset - 1));
+   }
+   // Restore the valid word match after overshooting
+   if (!range.toString().match(word_regexp)) {
+    range.setStart(node, range.startOffset + 1);
+   }
+
+   // Extend the range forward until it matches word ending
+   while ((range.endOffset < node.length) && range.toString().match(word_regexp)) {
+    range.setEnd(node, range.endOffset + 1);
+   }
+   // Restore the valid word match after overshooting
+   if (!range.toString().match(word_regexp)) {
+    range.setEnd(node, range.endOffset - 1);
+   }
+
+  }
+ }
+
+
+
+
+ //# .... *  button selecttextalldiv
+ function selecttextalldiv(containerid) {
+  if (templateBack) {
+   fullDivselected_wordselectionDisabledY = true
+   countClick_toReenableWordSelectionY = 0
+   fullDivselected_wordselectionDisabled = true
+   countClick_toReenableWordSelection = 0
+  } else {
+   fullDivselected_wordselectionDisabled = true
+   countClick_toReenableWordSelection = 0
+  }
+  var range = document.createRange();
+  range.selectNode(document.getElementById(containerid));
+  window.getSelection().removeAllRanges();
+  window.getSelection().addRange(range);
+ }
+
+ //  # .... * button to open the card browser
+ var buttoncardBrowser = document.getElementById("buttoncardBrowser");
+ var buttoncardBrowserControl = document.getElementById("buttoncardBrowserControl");
+
+ buttoncardBrowser.addEventListener(
+  "click",
+  function () {
+   buttoncardBrowser.style.visibility = "hidden";
+   buttoncardBrowserControl.style.display = "block";
+   setTimeout(function () {
+    buttoncardBrowser.style.visibility = "visible";
+    buttoncardBrowserControl.style.display = "none";
+   }, 4000);
+  },
+  false
+ );
+
+ buttoncardBrowserControl.addEventListener("click",
+  function () {
+   AnkiDroidJS.ankiSearchCard(`{{known}}`);
+  }, false);
+
+
+
+
+</script>
+
+
+
+<script src="0000_00_js_addon_button_front.js"></script>
